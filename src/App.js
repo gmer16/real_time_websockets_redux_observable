@@ -1,28 +1,39 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import Button from '@material-ui/core/Button';
+import SimpleCard from './SimpleCard';
+import Dashboard from './components/dashboard/Dashboard';
+import StockDetailInfo from './components/stock-detail-info/StockDetailInfo';
+import {
+  BrowserRouter as Router,
+  Link,
+  Route,
+  Switch,
+} from 'react-router-dom';
+import { fetchStockDetails, cancelFetchStockDetails } from './redux/ducks/stockDetails';
+import { Provider, connect } from 'react-redux';
 
-class App extends Component {
-  render() {
+
+
+let App = ({ fetchStockDetails }) => {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <Router>
+        <Switch>
+          <Route path="/" exact component={Dashboard} />
+          <Route 
+            path="/api/stocks/:stock"
+            render={ props => {
+              fetchStockDetails(props.match.params.stock);
+              return <StockDetailInfo ticker={props.match.params.stock} />;
+            } }
+          />
+        </Switch>
+      </Router>
     );
-  }
 }
+
+App = connect(
+  null,
+  { fetchStockDetails }
+)(App);
 
 export default App;
